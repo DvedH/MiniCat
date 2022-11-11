@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <title>Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='Profile_Style.css')}}">
+    <script src ="{{ url_for('static', filename='logic.js')}}"></script>
+
+</head>
+
+<body>
+
+    <header>
+        Universitoria
+    </header>
+        <h1> Welcome {{name}}</h1>
+        <div id="space">
+            <button class="tabL">Your Classes</button>
+
+
+            <div id="profile" class="tabcontent">
+            </div>
+
+
+            <div>
+                <table class = "table table-striped">
+                <tr class="bg-info">
+                    <th>Class</th>
+                    <th>Teacher</th>
+                    <th>Time</th>
+                    <th>Capacity</th>
+                    <th>Add Class</th>
+                </tr>
+
+                <tbody id="myTable">
+
+                </tbody>
+            </table>
+
+            </div>
+
+    </div>
+</body>
+
+</html>
