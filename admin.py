@@ -153,8 +153,10 @@ with app.app_context():
 
         allUsers = User.query.all()
         users = {}
-        check = 0
-        track = 0
+        passF = 0
+        nameF = 0
+        teacher = 0
+
         for i in allUsers:
             users[i.name] = i.name
             users[i.userID] = i.userID
@@ -166,12 +168,22 @@ with app.app_context():
                 if users[i.password] == pswd:
                     if users[i.isStudent]:
                         return render_template('profile.html', name=users[i.name])
-                    else:
-                        return render_template('Add.html', name=users[track.name])
-            check = 1
-            track = i
-        if check == 1:
-            return render_template('login.html', info="wrong Creds")
+                else:
+                    passF = 1
+            else:
+                nameF = 1
+
+        for i in allUsers:
+            if users[i.userID] == name:
+                if users[i.password] == pswd:
+                    if not users[i.isStudent]:
+                        return render_template('Add.html', name=users[i.name])
+
+        if nameF == 1:
+            return render_template('login.html', info="wrong Username")
+
+        if passF == 2:
+            return render_template('login.html', info="wrong Password")
 
 
 if __name__ == "__main__":
