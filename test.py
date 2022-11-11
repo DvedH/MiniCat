@@ -75,7 +75,7 @@ with app.app_context():
 
 
     # STUDENT FUNCTIONS
-    '''
+
     @app.route('/<string:username>', methods=['GET'])
     def get_studentID(username):
         student = Student.query.all()
@@ -83,23 +83,23 @@ with app.app_context():
         nameDictionary = [dict(r) for r in result.all()]
         for nameDict in nameDictionary:
             return nameDict["name"]
-        return nameDictionary["name"]
+        return ""
 
 
     @app.route('/<string:username>/classes', methods=['GET'])
-    def get_class(username):
+    def get_student_class(username):
         print('Getting class...')
+        # Query all values of Enrollment, the database where the classes are located.
         enroll = Enrollment.query.all()
-        # db.session.execute(db.select(Student).where(Student.name == name ))
         result = db.session.execute(db.select(Enrollment.classID).where(
             Enrollment.userID == username))  # Select the parts of enrollment where classID is the same as the ID of the student
         # print(type(result.all()))
-
+        # Create a dictionary that shows all classes that the student has.
         classDictionary = [dict(r) for r in result.all()]
         for classDict in classDictionary:
             classDict["classID"]
         return classDict["classID"]
-'''
+
 
     @app.route('/school/classes')
     def getAllClass():
@@ -110,40 +110,91 @@ with app.app_context():
         return classes
 
 
-    @app.route('/<string:username>/edit', methods=['POST'])
-    def editGrades(username):
-        teacher = Teacher.query.all()
-        editStudent = Student.query.all()
-
-        return "0"
-
-
     @app.route('/enroll', methods=['PUT'])
-    def editEnrollment():
+    def editEnrollment():  # Done, needs to sanitize input.
         # Send json of user and class name
         # Load up all the categories we may use and edit
-
-        targetStudent = Student.query.all()
-        classUpdate = Classes.query.all()
-        updateEnroll = Enrollment.query.all()
         contents = request.get_json(silent=True)
-        json.loads(contents)
-        targetClassNum = db.session.execute(
-            db.select(Classes.enrolledNum).where(Classes.classID == contents["classname"]))
-        targetClassMax = db.session.execute(
-            db.select(Classes.maxEnrollment).where(Classes.classID == contents["classname"]))
+        targetStudent = Student.query.all()
+        classUpdate = Classes.query.filter_by(classID=contents["classname"]).first()
+        updateEnroll = Enrollment.query.all()
+        # json.loads(contents) #Sanitizer, gives error at the moment.
+        print(contents)
+        targetClassNum = classUpdate.enrolledNum
+        targetClassMax = classUpdate.maxEnrollment
+        print(str(targetClassMax))
+        print(str(targetClassNum))
         # Check if we have space!
-        if (targetClassNum <= targetClassMax):
+        if (targetClassNum < targetClassMax):
             # Perform the logic here
             # Upon successful checking of space, we can now add the student to the class. This should be done in enrollment, where we have classID, userID, and grade.
             db.session.add(Enrollment(classID=contents["classname"], userID=contents["username"], grade=100.0))
             # Now we need to update the enrollmentNum in Classes.
             # Retrieve the class by using classID as the filter.
-            updatedNum = Classes.query.filter_by(classID=contents["classname"])
-            updatedNum.enrollmentNum = updatedNum.enrollmentNum + 1
+            newClassNum = Classes.query.filter_by(classID=contents["classname"]).update(
+                dict(enrolledNum=targetClassNum + 1))
 
         db.session.commit()
         return "check"
+
+
+    @app.route('/unenroll', methods=['DELETE'])
+    def delEnrollment():  # Done, needs to sanitize input.
+        # Send json of user and class name
+        # Load up all the categories we may use and edit
+        contents = request.get_json(silent=True)
+        targetStudent = Student.query.all()
+        classUpdate = Classes.query.filter_by(classID=contents["classname"]).first()
+        updateEnroll = Enrollment.query.all()
+        # json.loads(contents) #Sanitizer, gives error at the moment.
+        print(contents)
+        targetClassNum = classUpdate.enrolledNum
+        targetClassMax = classUpdate.maxEnrollment
+        print(str(targetClassMax))
+        print(str(targetClassNum))
+        # Check if we have space!
+        if (targetClassNum > 0):
+            # Perform the logic here
+            deletedUser = Enrollment.query.filter_by(userID=contents["username"], classID=contents["classname"]).first()
+            db.session.delete(deletedUser)
+            # Now we need to update the enrollmentNum in Classes.
+            # Retrieve the class by using classID as the filter.
+            newClassNum = Classes.query.filter_by(classID=contents["classname"]).update(
+                dict(enrolledNum=targetClassNum - 1))
+
+        db.session.commit()
+        return "check"
+
+
+    # TEACHER FUNCTIONS
+    @app.route('/editGrade', methods=['PUT'])
+    def editGrades():
+        teacher = Teacher.query.all()
+        contents = request.get_json(silent=True)
+        newGrade = Enrollment.query.filter_by(classID=contents["classname"], userID=contents["username"]).update(
+            dict(grade=contents["grades"]))
+        db.session.commit()
+        return "success"
+
+
+    @app.route('/<string:username>/teacherClass', methods=['GET'])
+    def getTeacherClass(username):
+        userTeacher = Teacher.query.filter_by(userID=username).first()
+        result = db.session.execute(db.select(Classes.classID).where(Classes.teacherName == userTeacher.teacherName))
+        # print(type(result.all()))
+        # Create a dictionary that shows all classes that the student has.
+        classDictionary = [dict(r) for r in result.all()]
+        for classDict in classDictionary:
+            return classDict["classID"]
+        return ""
+
+
+    @app.route('/<string:username>/<string:classname>/studentGrades', methods=['GET]'])
+    def getStudentGrades(username, classname):
+        userTeacher = Teacher.query.filter_by(userID=username).first()  # Targets the teacher with the same ID.
+        targetClass = Classes.query.filter_by(classID=classname).first()  # Finds the class that has the same ID/name.
+        targetEnrollment = Enrollment.query.filter_by(classID=targetClass.classID)
+        # We want to pull all of the student's grades from the classes that the teacher will teach.
 
 
     @app.route('/login', methods=['POST', 'GET'])

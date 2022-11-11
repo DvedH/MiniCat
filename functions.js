@@ -1,4 +1,3 @@
-
 $(document).ready(function(){
     $(".get").click(function(){
         var a;
@@ -35,12 +34,12 @@ $(document).ready(function(){
                     //Initialize a new row
                     student += '<tr>'
                     student += '<td>' + key + '</td>';
-                    student += '<td>' + value + '</td>';    
+                    student += '<td>' + value + '</td>';
                     student +=  '<\tr>'
                 });
                 $('#gradeTable').append(student);
             }
-        });        
+        });
     });
 
 
@@ -56,7 +55,7 @@ $(document).ready(function(){
         const body = {"name":name, "grade": grade};
         xhttp.send(JSON.stringify(body));
         xhttp.onload = function() {
-            
+
         };
 
         newStudent = '';
@@ -79,8 +78,8 @@ $(document).ready(function(){
         const body = {"grade": grade};
         xhttp.send(JSON.stringify(body));
         xhttp.onload = function() {
-            
-        };        
+
+        };
     });
     $(".deleteGrade").click(function(){
         var name, grade;
@@ -91,8 +90,8 @@ $(document).ready(function(){
         xhttp.setRequestHeader("Content-Type", "application/json");
         xhttp.send();
         xhttp.onload = function() {
-            
-        };        
+
+        };
     });
     $(".enrollStudent").click(function(){
         var username, classname;
@@ -103,17 +102,16 @@ $(document).ready(function(){
         xhttp.setRequestHeader("Content-Type", "application/json");
         const body = {"username": username ,"classname": classname};
         xhttp.send(JSON.stringify(body));
-        xhttp.onload = function() {      
+        xhttp.onload = function() {
 
         };
     });
-
-     $(".enrollStudent").click(function(){
+    $(".deleteStudent").click(function(){
         var username, classname;
         username = String($('#username').val());
         classname = String($('#classname').val());
         var xhttp = new XMLHttpRequest();
-        xhttp.open("PUT", "http://127.0.0.1:5000/enroll");
+        xhttp.open("DELETE", "http://127.0.0.1:5000/unenroll");
         xhttp.setRequestHeader("Content-Type", "application/json");
         const body = {"username": username ,"classname": classname};
         xhttp.send(JSON.stringify(body));
