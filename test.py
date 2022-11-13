@@ -89,31 +89,15 @@ with app.app_context():
 
     @app.route('/<string:username>/classes', methods=['GET'])
     def get_student_class(username):
-        print('Getting class...')
-        # Query all values of Enrollment, the database where the classes are located.
-        enroll = Enrollment.query.all()
-        result = db.session.execute(db.select(Enrollment.classID).where(
-            Enrollment.userID == username))  # Select the parts of enrollment where classID is the same as the ID of the student
-        # print(type(result.all()))
-        # Create a dictionary that shows all classes that the student has.
-        classDictionary = [dict(r) for r in result.all()]
-        for classDict in classDictionary:
-            classDict["classID"]
-        return classDict["classID"]
-
-
-    @app.route('/school/classes')
-    def getAllClass():
         allClass = Classes.query.all()
+        enrolled = Enrollment.query.all()
         counter = 0
+        c2 = 0
         classes = {}
+        classTaken = {}
+        schedule = {}
         for i in allClass:
             counter += 1
-            # classes[i.classID] = i.classID
-            # classes[i.teacherName] = i.teacherName
-            # classes[i.classTime] = i.classTime
-            # classes[str(i.enrolledNum)] = str(i.enrolledNum)
-            # classes[str(i.maxEnrollment)] = str(i.maxEnrollment)
         for i in range(0, counter):
             classes[i] = {}
             classes[i]["classID"] = allClass[i].classID
@@ -121,107 +105,107 @@ with app.app_context():
             classes[i]["classTime"] = allClass[i].classTime
             classes[i]["enrolledNum"] = allClass[i].enrolledNum
             classes[i]["maxEnrollment"] = allClass[i].maxEnrollment
-        print(classes)
-        #classes['class1']["classID"] = allClass[0].classID
-        # for i in allClass:
-        #     for j in range(counter):
-        #         classes[str(j)]["classID"] = i.classID
-        #         classes[str(j)]["teacherName"] = i.teacherName
-        #         classes[str(j)]["classTime"] = i.classTime
-        #         classes[str(j)]["enrolledNum"] = str(i.enrolledNum)
-        #         classes[str(j)]["maxEnrollment"] = str(i.maxEnrollment)
-        # for i in range(counter):
-        #     classes[i]["classID"] = i.classID
-        #     classes[id]["teacherName"] = i.teacherName
-        #     classes[id]["classTime"] = i.classTime
-        #     classes[id]["enrolledNum"] = str(i.enrolledNum)
-        #     classes[id]["maxEnrollment"] = str(i.maxEnrollment)
+        for i in enrolled:
+            c2 += 1
+        for i in range(0, c2):
+            classTaken[i] = {}
+            classTaken[i]["classID"] = enrolled[i].classID
+            classTaken[i]["userID"] = enrolled[i].userID
+            classTaken[i]["grade"] = enrolled[i].grade
 
-            # convert = str(i.enrolledNum)
-            # classes[i.classID] = i.classID
-            # classes[i.teacherName] = i.teacherName
-            # classes[i.classTime] = i.classTime
-            # classes[str(i.enrolledNum)] = str(i.enrolledNum)
-            # classes[str(i.maxEnrollment)] = str(i.maxEnrollment)
-        print(Classes.id)
-        return classes
+        for i in range(0, counter):
+            for j in range(0, c2):
+                if (classTaken[j]["userID"] == username) and (classTaken[j]["classID"] == allClass[i].classID):
+                    schedule[i] = {}
+                    schedule[i]["classID"] = allClass[i].classID
+                    schedule[i]["teacherName"] = allClass[i].teacherName
+                    schedule[i]["classTime"] = allClass[i].classTime
+                    schedule[i]["enrolledNum"] = allClass[i].enrolledNum
+                    schedule[i]["maxEnrollment"] = allClass[i].maxEnrollment
+        # if
+        print(classes)
+        print(schedule)
+        return schedule
+        # print('Getting class...')
+        # # Query all values of Enrollment, the database where the classes are located.
+        # enroll = Enrollment.query.all()
+        # result = db.session.execute(db.select(Enrollment.classID).where(
+        #     Enrollment.userID == username))  # Select the parts of enrollment where classID is the same as the ID of the student
+        # # print(type(result.all()))
+        # # Create a dictionary that shows all classes that the student has.
+        # classDictionary = [dict(r) for r in result.all()]
+        # for classDict in classDictionary:
+        #     classDict["classID"]
+        # return classDict["classID"]
+
 
     @app.route('/school/classes')
-    def getAllClass0():
+    def getAllClass():
         allClass = Classes.query.all()
+        enrolled = Enrollment.query.all()
+        counter = 0
+        username = "David Hernandez"
+        c2 = 0
         classes = {}
+        classTaken = {}
+        schedule = {}
         for i in allClass:
-            classes[i.id] = i.classID
-        return classes
-    @app.route('/school/classes/1')
-    def getAllClass1():
-        allClass = Classes.query.all()
-        classes = {}
-        for i in allClass:
-            classes[i.id] = i.teacherName
-        return classes
+            counter += 1
+        for i in range(0, counter):
+            classes[i] = {}
+            classes[i]["classID"] = allClass[i].classID
+            classes[i]["teacherName"] = allClass[i].teacherName
+            classes[i]["classTime"] = allClass[i].classTime
+            classes[i]["enrolledNum"] = allClass[i].enrolledNum
+            classes[i]["maxEnrollment"] = allClass[i].maxEnrollment
+        for i in enrolled:
+            c2 += 1
+        for i in range(0, c2):
+            classTaken[i] = {}
+            classTaken[i]["classID"] = enrolled[i].classID
+            classTaken[i]["userID"] = enrolled[i].userID
+            classTaken[i]["grade"] = enrolled[i].grade
 
-    @app.route('/school/classes/2')
-    def getAllClass2():
-        allClass = Classes.query.all()
-        classes = {}
-        for i in allClass:
-            classes[i.id] = i.classTime
+        for i in range(0, counter):
+            for j in range(0, c2):
+                if (classTaken[j]["userID"] == username) and (classTaken[j]["classID"] == allClass[i].classID):
+                    schedule[i] = {}
+                    schedule[i]["classID"] = allClass[i].classID
+                    schedule[i]["teacherName"] = allClass[i].teacherName
+                    schedule[i]["classTime"] = allClass[i].classTime
+                    schedule[i]["enrolledNum"] = allClass[i].enrolledNum
+                    schedule[i]["maxEnrollment"] = allClass[i].maxEnrollment
+        #if
+        print(classes)
+        print(schedule)
         return classes
-
-    @app.route('/school/classes/3')
-    def getAllClass3():
-        allClass = Classes.query.all()
-        classes = {}
-        for i in allClass:
-            classes[i.id] = i.classID
-        return classes
-
-    @app.route('/school/classes/4')
-    def getAllClass4():
-        allClass = Classes.query.all()
-        classes = {}
-        for i in allClass:
-            classes[i.id] = i.classID
-        return classes
-
 
     @app.route('/enroll', methods=['PUT'])
     def editEnrollment():  # Done, needs to sanitize input.
         # Send json of user and class name
         # Load up all the categories we may use and edit
         contents = request.json
-        nm = contents["classname"]
-        us = contents["username"]
-
-        courses = Classes.query.all()
-        print(nm)
-
-
-        clss = {}
-        for i in courses:
-            if i.classID == nm:
-                targetClassNum = i.enrolledNum
-                targetClassMax = i.maxEnrollment
-
+        targetStudent = Student.query.all()
+        classUpdate = Classes.query.filter_by(classID=contents["classname"]).first()
+        updateEnroll = Enrollment.query.all()
         # json.loads(contents) #Sanitizer, gives error at the moment.
-
+        print(contents)
+        targetClassNum = classUpdate.enrolledNum
+        targetClassMax = classUpdate.maxEnrollment
+        print(str(targetClassMax))
+        print(str(targetClassNum))
         # Check if we have space!
-
         if (targetClassNum < targetClassMax):
             # Perform the logic here
             # Upon successful checking of space, we can now add the student to the class. This should be done in enrollment, where we have classID, userID, and grade.
-            newClassEntry = Enrollment(classID=nm, userID=us, grade=100.0)
-            db.session.add(newClassEntry)
-            db.session.commit()
+            db.session.add(Enrollment(classID=contents["classname"], userID=contents["username"], grade=100.0))
             # Now we need to update the enrollmentNum in Classes.
             # Retrieve the class by using classID as the filter.
-            newClassNum = db.session.query(Classes).filter(Classes.classID == nm).one()
-            newClassNum.enrollNum = targetClassNum+1
-            print(newClassNum.enrollNum)
-            db.session.commit()
+            newClassNum = Classes.query.filter_by(classID=contents["classname"]).update(
+                dict(enrolledNum=targetClassNum + 1))
 
-            return "check"
+        db.session.commit()
+        return "check"
 
     @app.route('/unenroll', methods=['DELETE'])
     def delEnrollment():  # Done, needs to sanitize input.
@@ -336,5 +320,9 @@ with app.app_context():
                 usr = session["Username"]
                 return usr
 
+
+    @app.route('/logout', methods=['POST', 'GET'])
+    def logout():
+        return render_template('login.html')
 if __name__ == "__main__":
     app.run(debug=True)

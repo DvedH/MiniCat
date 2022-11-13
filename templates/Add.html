@@ -4,48 +4,45 @@
 <head>
     <title>Profile</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='Profile_Style.css')}}">
-    <script src ="{{ url_for('static', filename='logic.js')}}"></script>
+    <script src ="{{ url_for('static', filename='functions.js')}}"></script>
 
 </head>
 
 <body>
-
-    <header>
+<header>
         Universitoria
     </header>
-       <h1 id="USER">{{name}}</h1>
+        <h1 id="USER">{{name}}</h1>
+    <h1><form action="/logout" method="POST">
+        <input id="vut" type="submit" value="Logout">
+    </form></h1>
+
         <div id="space">
-            <button class="tabL">Your Classes</button>
+
+            <button class="proftablink" onclick="yourClass()">Your Classes</button>
 
 
-            <div id="profile" class="tabcontent">
-            </div>
+            <div id="profile" class="tabcontent"></div>
 
-
+            <div id="Cataloged" class="tabcontent"></div>
             <div>
-                <table class = "table table-striped">
-                <tr class="bg-info">
-                    <th>Class</th>
-                    <th>Teacher</th>
-                    <th>Time</th>
-                    <th>Capacity</th>
-                    <th>Add Class</th>
-                </tr>
+                <table class="Header">
+                    <thead>
+                        <tr class="bg-info">
+                            <th>Class</th>
+                            <th>Teacher</th>
+                            <th>Time</th>
+                            <th>Capacity</th>
+                            <th>Add Class</th>
+                        </tr>
 
-                <tbody id="myTable">
+                        <tbody class = "content" id="data-output">
 
-                </tbody>
-            </table>
-                <table>
-                    <tr>
-                        <td>
-                            <button class="enrollStudent1">Add</button><button>Delete</button>
-                        </td>
-                    </tr>
+                        </tbody>
+                    </thead>
                 </table>
             </div>
-
-    </div>
+        </div>
 </body>
 
 </html>

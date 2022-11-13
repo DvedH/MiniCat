@@ -14,11 +14,14 @@
         Universitoria
     </header>
         <h1 id="USER">{{name}}</h1>
-        <h1 class="fullname" ><button class="fullname"></button></h1>
+    <h1><form action="/logout" method="POST">
+        <input id="vut" type="submit" value="Logout">
+    </form></h1>
+
         <div id="space">
 
-            <button class="tablink">Your Classes</button>
-            <button class="getAll" onclick="getOffered()">Add Classes</button>
+            <button class="tablink" onclick="yourClass()">Your Classes</button>
+            <button class="tablink" onclick="getOffered()">Add Classes</button>
 
 
             <div id="profile" class="tabcontent"></div>
@@ -34,40 +37,11 @@
                             <th>Capacity</th>
                             <th>Add Class</th>
                         </tr>
-                    </thead>                <table style="float: left" class = "content" id="gradeTable">
 
-                    <tbody class = "content" id="data-output">
+                        <tbody class = "content" id="data-output">
 
-                    </tbody>
-                </table>
-
-                <table style="float: left" class = "content" id="gradeTable1">
-
-                    <tbody>
-
-                    </tbody>
-                </table>
-
-                <table style="float: left" class = "content" id="gradeTable2">
-
-                    <tbody>
-
-                    </tbody>
-                </table>
-
-                <table  style="float: left" class = "content" id="gradeTable3">
-
-                    <tbody>
-
-                    </tbody>
-                </table>
-
-                <table style="float: left" class = "content" id="gradeTable4">
-
-                    <tbody>
-
-                    </tbody>
-                </table>
+                        </tbody>
+                    </thead>
                 </table>
             </div> 
         </div>
