@@ -18,23 +18,25 @@
         <div id="space">
 
             <button class="tablink">Your Classes</button>
-            <button class="getAll" onclick="getOffered()">Add Classes</button>
+            <button class="getAll" >Add Classes</button>
 
 
-            <div id="profile" class="tabcontent"></div>
+            <div id="profile" class="tabcontent">
+            </div>
 
-            <div id="Cataloged" class="tabcontent"></div>
+            <div id="Cataloged" class="tabcontent">
+            </div>
             <div>
                 <table class="Header">
-                    <thead>
-                        <tr class="bg-info">
-                            <th>Class</th>
-                            <th>Teacher</th>
-                            <th>Time</th>
-                            <th>Capacity</th>
-                            <th>Add Class</th>
-                        </tr>
-                    </thead>                <table style="float: left" class = "content" id="gradeTable">
+                    <tr class="bg-info">
+                        <th>Class</th>
+                        <th>Teacher</th>
+                        <th>Time</th>
+                        <th>Capacity</th>
+                        <th>Add Class</th>
+                    </tr>
+                </table>
+                <table style="float: left" class = "content" id="gradeTable">
 
                     <tbody>
 
@@ -68,9 +70,26 @@
 
                     </tbody>
                 </table>
-                </table>
-            </div> 
-        </div>
+
+            </div>
+
+
+
+
+                    <tbody id="data-output">
+<!--                        {% for key, value in data.items() %}-->
+                            <tr>
+                                <td class="col-md-2">{{ web_data[url_sequence].url }}</td>
+                                <td class="col-md-2">{{ web_data[url_sequence].name }}</td>
+                                <td class="col-md-2">{{ web_data[url_sequence].count }}</td>
+                            </tr>
+<!--                        {% endfor %}-->
+
+
+
+
+
+    </div>
     <div id="Tracker"> </div>
 </body>
  <script src ="{{ url_for('static', filename='functions.js')}}"></script>

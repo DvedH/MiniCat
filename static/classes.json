@@ -1,0 +1,30 @@
+[
+    {
+         "classID": "Physics 121",
+         "teacherName": "Susan Walker",
+         "classTime": "TR 11:00-11:50 AM",
+         "enrolledNum": 0,
+         "enrolledMax": 10
+     },
+     {
+         "classID": "CS 106",
+         "teacherName": "Ammon Hepworth",
+         "classTime": "MWF 2:00-2:50 PM",
+         "enrolledNum": 0,
+         "enrolledMax": 10
+     },
+     {
+         "classID": "Math 101",
+         "teacherName": "Ralph Jenkins",
+         "classTime": "MWF 10:00-10:50 AM",
+         "enrolledNum": 0,
+         "enrolledMax": 8
+     },
+     {
+         "classID": "CS 162",
+         "teacherName": "Ammon Hepworth",
+         "classTime": "TR 3:00-3:50 PM",
+         "enrolledNum": 0,
+         "enrolledMax": 4
+     },
+]

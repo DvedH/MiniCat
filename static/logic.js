@@ -1,28 +1,70 @@
-$.ajax({
-            url: "whatever you want here",
+    async function getStudents() {
+        // GET request, update list on response
+        res = fetch('http://127.0.0.1:5000/grades', {
+            method: 'GET'
+        })
+            .then((response) => response.json())
+            .then((data) => updateGradebook(data))
+    }
+
+    function updateGradebook(data) {
+        // get gradebook (unordered list) and clear
+        var gradebook = document.getElementById("gradebook")
+
+        while (gradebook.firstChild) {
+            gradebook.removeChild(gradebook.firstChild);
+        }
+        // update the gradebook with fresh list of grades
+        for (var class in data) {
+            for (var item in data[class]) {
+                 entry = String(item) + " : " + String(data[item])
+            }
+            entry += "\n"
+            var element = document.createElement('p')
+            element.innerHTML = entry
+            gradebook.appendChild(element)
+        }
+    }
+
+     $(".getAll").click(function(){
+        $.ajax({
+            url: "http://127.0.0.1:5000/school/classes",
             success: function (data){
-                const blockOfText = JSON.stringify(data, null, 4);
-                $("#gradeTable tbody tr").remove();
-                console.log(Object.keys(data));
-                console.log(Object.values(data));
-                var student = '';
-                $.each(data, function(key, value){
-                    //Initialize a new row
-                    student += '<tr>'
-                    student += '<td>' + key + '</td>';
-                    student += '<td>' + value + '</td>';
-                    student +=  '<\tr>'
-                });
-                $('#gradeTable').append(student);
+                myArray = data.data
+                var table = document.getElementByID('myTable')
+
+                for (var i = 0; i< data.length; i++) {
+                    var row = `<tr>
+                                    <td>${data[i].classID}</td>
+                                    <td>${data[i].teacherName}</td>
+                                    <td>${data[i].classTime}</td>
+                                    <td>${data[i].enrolledNum}</td>
+                                    <td>${data[i].maxEnrollment}</td>
+                               </tr>`
+                    table.innerHTML += row
+                }
             }
         });
-/*async function loadIntoTable(url, table) {
-    tableHead = table.querySelector("thead");
-    tableBody = table.querySelector("tbody");    
+    });
 
-    response = await fetch(url);
-    const { headers, rows} = await response.json();
+                    }
+                $.each(data, function(key, value){
+                    i = 0;
+                    //Initialize a new row
+                    student += '<tr>'
+                    student += '<td><button class=enrollStudent' + i+ '>Add</button><button>Delete</button></td>';
+                    student +=  '<\tr>'
+                    i+= 1;
+                });
+                for (var i = 0; i < 4; i++) {
+                    //Initialize a new row
+                    student += '<tr>'
+                    student += '<td><button class=enrollStudent' + i+ '>Add</button><button>Delete</button></td>';
+                    student +=  '<\tr>'
+                }
 
-}
-
-loadIntoTable("./classes.json", document.querySelector("table"));*/
+                num = $('#Tracker').val();
+                classes = [];
+                for (var i = 1; i <= num; i++) {
+                    classes[i] = String($('#classname'+ String(i)).val());
+                }

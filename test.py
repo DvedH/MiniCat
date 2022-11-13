@@ -1,7 +1,7 @@
 from pprint import pprint
-from flask import Flask
+from flask import Flask, jsonify
 from flask import request
-from flask import abort, render_template
+from flask import abort, render_template, session, g
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_admin import Admin
@@ -13,12 +13,14 @@ import json
 app = Flask(__name__)
 app.secret_key = 'super secret key'
 
+
 with app.app_context():
     CORS(app)
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///gradebook.sqlite"
     app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
     admin = Admin(app, name='microblog', template_mode='bootstrap3')
-
+    global currenUser
+    global counter
     db = SQLAlchemy(app)
 
     class Student(db.Model):
@@ -36,9 +38,9 @@ with app.app_context():
         id = db.Column(db.Integer, primary_key=True)
         classID = db.Column(db.String, unique=True, nullable=True)
         teacherName = db.Column(db.String, unique=False, nullable=True)
+        classTime = db.Column(db.String, unique=False, nullable=True)
         enrolledNum = db.Column(db.Integer, unique=False, nullable=True)
         maxEnrollment = db.Column(db.Integer, unique=False, nullable=True)
-        classTime = db.Column(db.Integer, unique=False, nullable=True)
 
 
     class Teacher(db.Model):
@@ -49,7 +51,7 @@ with app.app_context():
 
     class Enrollment(db.Model):
         id = db.Column(db.Integer, primary_key=True)
-        classID = db.Column(db.String, unique=True, nullable=True)
+        classID = db.Column(db.String, unique=False, nullable=True)
         userID = db.Column(db.String, unique=False, nullable=False)
         grade = db.Column(db.Float, unique=False, nullable=True)
 
@@ -67,7 +69,6 @@ with app.app_context():
     admin.add_view(ModelView(Classes, db.session))
     admin.add_view(ModelView(Enrollment, db.session))
     admin.add_view(ModelView(User, db.session))
-
 
     @app.route('/')
     def home():
@@ -101,8 +102,60 @@ with app.app_context():
         return classDict["classID"]
 
 
+    # @app.route('/school/classes')
+    # def getAllClass():
+    #     allClass = Classes.query.all()
+    #     classes = {}
+    #
+    #     for i in allClass:
+    #         classes["classID"] = i.classID
+    #         classes["teacherName"] = i.teacherName
+    #         classes["classTime"] = i.classTime
+    #         classes["enrolledNum"] = str(i.enrolledNum)
+    #         classes["maxEnrollment"] = str(i.maxEnrollment)
+    #
+    #         # convert = str(i.enrolledNum)
+    #         # classes[i.classID] = i.classID
+    #         # classes[i.teacherName] = i.teacherName
+    #         # classes[i.classTime] = i.classTime
+    #         # classes[str(i.enrolledNum)] = str(i.enrolledNum)
+    #         # classes[str(i.maxEnrollment)] = str(i.maxEnrollment)
+    #     print(classes)
+    #     return classes
+
     @app.route('/school/classes')
     def getAllClass():
+        allClass = Classes.query.all()
+        classes = {}
+        for i in allClass:
+            classes[i.id] = i.classID
+        return classes
+    @app.route('/school/classes/1')
+    def getAllClass1():
+        allClass = Classes.query.all()
+        classes = {}
+        for i in allClass:
+            classes[i.id] = i.teacherName
+        return classes
+
+    @app.route('/school/classes/2')
+    def getAllClass2():
+        allClass = Classes.query.all()
+        classes = {}
+        for i in allClass:
+            classes[i.id] = i.classTime
+        return classes
+
+    @app.route('/school/classes/3')
+    def getAllClass3():
+        allClass = Classes.query.all()
+        classes = {}
+        for i in allClass:
+            classes[i.id] = i.classID
+        return classes
+
+    @app.route('/school/classes/4')
+    def getAllClass4():
         allClass = Classes.query.all()
         classes = {}
         for i in allClass:
@@ -114,29 +167,38 @@ with app.app_context():
     def editEnrollment():  # Done, needs to sanitize input.
         # Send json of user and class name
         # Load up all the categories we may use and edit
-        contents = request.get_json(silent=True)
-        targetStudent = Student.query.all()
-        classUpdate = Classes.query.filter_by(classID=contents["classname"]).first()
-        updateEnroll = Enrollment.query.all()
+        contents = request.json
+        nm = contents["classname"]
+        us = contents["username"]
+
+        courses = Classes.query.all()
+        print(nm)
+
+
+        clss = {}
+        for i in courses:
+            if i.classID == nm:
+                targetClassNum = i.enrolledNum
+                targetClassMax = i.maxEnrollment
+
         # json.loads(contents) #Sanitizer, gives error at the moment.
-        print(contents)
-        targetClassNum = classUpdate.enrolledNum
-        targetClassMax = classUpdate.maxEnrollment
-        print(str(targetClassMax))
-        print(str(targetClassNum))
+
         # Check if we have space!
+
         if (targetClassNum < targetClassMax):
             # Perform the logic here
             # Upon successful checking of space, we can now add the student to the class. This should be done in enrollment, where we have classID, userID, and grade.
-            db.session.add(Enrollment(classID=contents["classname"], userID=contents["username"], grade=100.0))
+            newClassEntry = Enrollment(classID=nm, userID=us, grade=100.0)
+            db.session.add(newClassEntry)
+            db.session.commit()
             # Now we need to update the enrollmentNum in Classes.
             # Retrieve the class by using classID as the filter.
-            newClassNum = Classes.query.filter_by(classID=contents["classname"]).update(
-                dict(enrolledNum=targetClassNum + 1))
+            newClassNum = db.session.query(Classes).filter(Classes.classID == nm).one()
+            newClassNum.enrollNum = targetClassNum+1
+            print(newClassNum.enrollNum)
+            db.session.commit()
 
-        db.session.commit()
-        return "check"
-
+            return "check"
 
     @app.route('/unenroll', methods=['DELETE'])
     def delEnrollment():  # Done, needs to sanitize input.
@@ -146,6 +208,7 @@ with app.app_context():
         targetStudent = Student.query.all()
         classUpdate = Classes.query.filter_by(classID=contents["classname"]).first()
         updateEnroll = Enrollment.query.all()
+
         # json.loads(contents) #Sanitizer, gives error at the moment.
         print(contents)
         targetClassNum = classUpdate.enrolledNum
@@ -197,45 +260,58 @@ with app.app_context():
         # We want to pull all of the student's grades from the classes that the teacher will teach.
 
 
+    @app.route('/fillUsername', methods=['PUT'])
+    def filluser():
+        return currenUser
+
     @app.route('/login', methods=['POST', 'GET'])
     def login():
-        name = request.form['usn']
-        pswd = request.form['psw']
+        if request.method == 'POST':
+            session.pop('Username', None)
+            name = request.form['usn']
+            pswd = request.form['psw']
 
-        allUsers = User.query.all()
-        users = {}
-        passF = 0
-        nameF = 0
-        teacher = 0
+            allUsers = User.query.all()
+            users = {}
+            passF = 0
+            nameF = 0
+            teacher = 0
 
-        for i in allUsers:
-            users[i.name] = i.name
-            users[i.userID] = i.userID
-            users[i.password] = i.password
-            users[i.isStudent] = i.isStudent
+            for i in allUsers:
+                users[i.name] = i.name
+                users[i.userID] = i.userID
+                users[i.password] = i.password
+                users[i.isStudent] = i.isStudent
 
-        for i in allUsers:
-            if users[i.userID] == name:
-                if users[i.password] == pswd:
-                    if users[i.isStudent]:
-                        return render_template('profile.html', name=users[i.name])
+            for i in allUsers:
+                if users[i.userID] == name:
+                    if users[i.password] == pswd:
+                        if users[i.isStudent]:
+                            fullname = str(users[i.name])
+                            currenUser = fullname
+                            session['Username'] = fullname
+                            return render_template('profile.html', name=fullname)
+                    else:
+                        passF = 1
                 else:
-                    passF = 1
-            else:
-                nameF = 1
+                    nameF = 1
 
-        for i in allUsers:
-            if users[i.userID] == name:
-                if users[i.password] == pswd:
-                    if not users[i.isStudent]:
-                        return render_template('Add.html', name=users[i.name])
+            for i in allUsers:
+                if users[i.userID] == name:
+                    if users[i.password] == pswd:
+                        if not users[i.isStudent]:
+                            return render_template('Add.html', name=users[i.name])
 
-        if nameF == 1:
-            return render_template('login.html', info="wrong Username")
+            if nameF == 1:
+                return render_template('login.html', info="wrong Username")
 
-        if passF == 2:
-            return render_template('login.html', info="wrong Password")
+            if passF == 2:
+                return render_template('login.html', info="wrong Password")
 
+        if request.method == 'GET':
+            if "Username" in session:
+                usr = session["Username"]
+                return usr
 
 if __name__ == "__main__":
     app.run(debug=True)
