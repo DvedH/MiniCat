@@ -1,45 +1,45 @@
 
 '/<string:username>/teacherClass'
-async function getOffered() {
-
-}
-//    async function getOffered() {
-//        res = fetch('http://127.0.0.1:5000/school/classes', {
-//            method:'GET',
-//        })
-//            .then((response) => response.json())
-//            .then((data) => fillTable(data))
-//    }
-//    function fillTable(data) {
-//        let placeholder = document.querySelector("#data-output");
-//        let out = "";
-//        var i =0;
+//async function getOffered() {
 //
-//        for (var i = 0; i < 5; i++) {
+//}
+    async function getOffered() {
+        res = fetch('http://127.0.0.1:5000/school/classes', {
+            method:'GET',
+        })
+            .then((response) => response.json())
+            .then((data) => fillTable(data))
+    }
+    function fillTable(data) {
+        let placeholder = document.querySelector("#data-output");
+        let out = "";
+        var i =0;
+
+        for (var i = 0; i < 5; i++) {
+            for (var items in data) {
+                 console.log(data[items])
+            }
+        }
+        for (var items in data) {
 //            for (var items in data) {
 //                 console.log(data[items])
+//                // console.log(i)
 //            }
-//        }
-//        for (var i = 0; i < 1; i++) {
-////            for (var items in data) {
-////                 console.log(data[items])
-////                // console.log(i)
-////            }
-////               console.log(data[prod])
-//
-//            out +=
-//                `<tr>
-//                    <td id=classname`+ i+ '>' +  data["classID"] +`</td>
-//                    <td>` + data["teacherName"] + `</td>
-//                    <td> ` + data["classTime"] + ` </td>
-//                    <td>` + data["enrolledNum"] + "/"+ data["maxEnrollment"] +` </td>
-//                    <td><button id=enrollStudent`+i+ `onclick="enrollS()">Add</button><button>Delete</button></td>
-//                </tr>`;
-//
-//
-//        }
-//        placeholder.innerHTML = out;
-//    }
+               console.log(data[items])
+
+            out +=
+                `<tr>
+                    <td id=classname`+ i+ '>' +  data[items]["classID"] +`</td>
+                    <td>` + data[items]["teacherName"] + `</td>
+                    <td> ` + data[items]["classTime"] + ` </td>
+                    <td>` + data[items]["enrolledNum"] + "/"+ data[items]["maxEnrollment"] +` </td>
+                    <td><button id=enrollStudent`+i+ `onclick="enrollS()">Add</button><button>Delete</button></td>
+                </tr>`;
+
+
+        }
+        placeholder.innerHTML = out;
+    }
 
     async function enrollS1() {
         var username, classname;
@@ -90,123 +90,123 @@ $(document).ready(function(){
     });
 //oldTable code
 
-   $(".getAll").click(function(){
-        $.ajax({
-            url: "http://127.0.0.1:5000/school/classes",
-            success: function (data){
-                const blockOfText = JSON.stringify(data, null, 4);
-                //const obj = JSON.parse(blockOfText);
-                //document.body.innerHTML = blockOfText;
-                $("#gradeTable tbody tr").remove();
-                $("#Tracker p").remove();
-                console.log(Object.keys(data));
-                console.log(Object.values(data));
-                var num = '';
-                var student = '';
-                $.each(data, function(key, value){
-                    //Initialize a new row
-                    student += '<tr>'
-                    student += '<td id=classname'+ key + '>' + value + '</td>';
-                    student +=  '<\tr>'
-                    num = '<p>' + key + '</p>';
-                });
-                $('#gradeTable').append(student);
-                $('#Tracker').append(num);
-            }
-        });
-    });
-
-    $(".getAll").click(function(){
-        $.ajax({
-            url: "http://127.0.0.1:5000/school/classes/1",
-            success: function (data){
-                const blockOfText = JSON.stringify(data, null, 4);
-                //const obj = JSON.parse(blockOfText);
-                //document.body.innerHTML = blockOfText;
-                $("#gradeTable1 tbody tr").remove();
-                console.log(Object.keys(data));
-                console.log(Object.values(data));
-                var student = '';
-                $.each(data, function(key, value){
-                    //Initialize a new row
-                    student += '<tr>'
-                    student += '<td>' + value + '</td>';
-                    student +=  '<\tr>'
-                });
-                $('#gradeTable1').append(student);
-            }
-        });
-    });
-
-    $(".getAll").click(function(){
-        $.ajax({
-            url: "http://127.0.0.1:5000/school/classes/2",
-            success: function (data){
-
-                const blockOfText = JSON.stringify(data, null, 4);
-                //const obj = JSON.parse(blockOfText);
-                //document.body.innerHTML = blockOfText;
-                $("#gradeTable2 tbody tr").remove();
-                console.log(Object.keys(data));
-                console.log(Object.values(data));
-                var student = '';
-                $.each(data, function(key, value){
-                    //Initialize a new row
-                    student += '<tr>'
-                    student += '<td>' + value + '</td>';
-                    student +=  '<\tr>'
-                });
-                $('#gradeTable2').append(student);
-            }
-        });
-    });
-
-    $(".getAll").click(function(){
-        $.ajax({
-            url: "http://127.0.0.1:5000/school/classes",
-            success: function (data){
-                const blockOfText = JSON.stringify(data, null, 4);
-                //const obj = JSON.parse(blockOfText);
-                //document.body.innerHTML = blockOfText;
-                console.log(Object.keys(data));
-                console.log(Object.values(data));
-                $("#gradeTable3 tbody tr").remove();
-                var student = '';
-                $.each(data, function(key, value){
-                    //Initialize a new row
-                    student += '<tr>'
-                    student += '<td>' + value + '</td>';
-                    student +=  '<\tr>'
-                });
-                $('#gradeTable3').append(student);
-            }
-        });
-    });
-
-    $(".getAll").click(function(){
-        $.ajax({
-            url: "http://127.0.0.1:5000/school/classes",
-            success: function (data){
-                const blockOfText = JSON.stringify(data, null, 4);
-                //const obj = JSON.parse(blockOfText);
-                //document.body.innerHTML = blockOfText;
-                $("#gradeTable4 tbody tr").remove();
-                console.log(Object.keys(data));
-                console.log(Object.values(data));
-                var student = '';
-
-                $.each(data, function(key, value){
-                    i = 0;
-                    //Initialize a new row
-                    student += '<tr>'
-                    student += '<td><button class=enrollStudent onclick="enrollS1()"' + key + '>Add</button><button>Delete</button></td>';
-                    student +=  '<\tr>'
-                    i+= 1;
-                });
-                $('#gradeTable4').append(student);
-            }
-        });
-    });
+//   $(".getAll").click(function(){
+//        $.ajax({
+//            url: "http://127.0.0.1:5000/school/classes",
+//            success: function (data){
+//                const blockOfText = JSON.stringify(data, null, 4);
+//                //const obj = JSON.parse(blockOfText);
+//                //document.body.innerHTML = blockOfText;
+//                $("#gradeTable tbody tr").remove();
+//                $("#Tracker p").remove();
+//                console.log(Object.keys(data));
+//                console.log(Object.values(data));
+//                var num = '';
+//                var student = '';
+//                $.each(data, function(key, value){
+//                    //Initialize a new row
+//                    student += '<tr>'
+//                    student += '<td id=classname'+ key + '>' + value + '</td>';
+//                    student +=  '<\tr>'
+//                    num = '<p>' + key + '</p>';
+//                });
+//                $('#gradeTable').append(student);
+//                $('#Tracker').append(num);
+//            }
+//        });
+//    });
+//
+//    $(".getAll").click(function(){
+//        $.ajax({
+//            url: "http://127.0.0.1:5000/school/classes/1",
+//            success: function (data){
+//                const blockOfText = JSON.stringify(data, null, 4);
+//                //const obj = JSON.parse(blockOfText);
+//                //document.body.innerHTML = blockOfText;
+//                $("#gradeTable1 tbody tr").remove();
+//                console.log(Object.keys(data));
+//                console.log(Object.values(data));
+//                var student = '';
+//                $.each(data, function(key, value){
+//                    //Initialize a new row
+//                    student += '<tr>'
+//                    student += '<td>' + value + '</td>';
+//                    student +=  '<\tr>'
+//                });
+//                $('#gradeTable1').append(student);
+//            }
+//        });
+//    });
+//
+//    $(".getAll").click(function(){
+//        $.ajax({
+//            url: "http://127.0.0.1:5000/school/classes/2",
+//            success: function (data){
+//
+//                const blockOfText = JSON.stringify(data, null, 4);
+//                //const obj = JSON.parse(blockOfText);
+//                //document.body.innerHTML = blockOfText;
+//                $("#gradeTable2 tbody tr").remove();
+//                console.log(Object.keys(data));
+//                console.log(Object.values(data));
+//                var student = '';
+//                $.each(data, function(key, value){
+//                    //Initialize a new row
+//                    student += '<tr>'
+//                    student += '<td>' + value + '</td>';
+//                    student +=  '<\tr>'
+//                });
+//                $('#gradeTable2').append(student);
+//            }
+//        });
+//    });
+//
+//    $(".getAll").click(function(){
+//        $.ajax({
+//            url: "http://127.0.0.1:5000/school/classes",
+//            success: function (data){
+//                const blockOfText = JSON.stringify(data, null, 4);
+//                //const obj = JSON.parse(blockOfText);
+//                //document.body.innerHTML = blockOfText;
+//                console.log(Object.keys(data));
+//                console.log(Object.values(data));
+//                $("#gradeTable3 tbody tr").remove();
+//                var student = '';
+//                $.each(data, function(key, value){
+//                    //Initialize a new row
+//                    student += '<tr>'
+//                    student += '<td>' + value + '</td>';
+//                    student +=  '<\tr>'
+//                });
+//                $('#gradeTable3').append(student);
+//            }
+//        });
+//    });
+//
+//    $(".getAll").click(function(){
+//        $.ajax({
+//            url: "http://127.0.0.1:5000/school/classes",
+//            success: function (data){
+//                const blockOfText = JSON.stringify(data, null, 4);
+//                //const obj = JSON.parse(blockOfText);
+//                //document.body.innerHTML = blockOfText;
+//                $("#gradeTable4 tbody tr").remove();
+//                console.log(Object.keys(data));
+//                console.log(Object.values(data));
+//                var student = '';
+//
+//                $.each(data, function(key, value){
+//                    i = 0;
+//                    //Initialize a new row
+//                    student += '<tr>'
+//                    student += '<td><button class=enrollStudent onclick="enrollS1()"' + key + '>Add</button><button>Delete</button></td>';
+//                    student +=  '<\tr>'
+//                    i+= 1;
+//                });
+//                $('#gradeTable4').append(student);
+//            }
+//        });
+//    });
 
     $(".addStudent").click(function(){
         //Making a POST call

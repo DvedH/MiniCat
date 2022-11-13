@@ -102,29 +102,52 @@ with app.app_context():
         return classDict["classID"]
 
 
-    # @app.route('/school/classes')
-    # def getAllClass():
-    #     allClass = Classes.query.all()
-    #     classes = {}
-    #
-    #     for i in allClass:
-    #         classes["classID"] = i.classID
-    #         classes["teacherName"] = i.teacherName
-    #         classes["classTime"] = i.classTime
-    #         classes["enrolledNum"] = str(i.enrolledNum)
-    #         classes["maxEnrollment"] = str(i.maxEnrollment)
-    #
-    #         # convert = str(i.enrolledNum)
-    #         # classes[i.classID] = i.classID
-    #         # classes[i.teacherName] = i.teacherName
-    #         # classes[i.classTime] = i.classTime
-    #         # classes[str(i.enrolledNum)] = str(i.enrolledNum)
-    #         # classes[str(i.maxEnrollment)] = str(i.maxEnrollment)
-    #     print(classes)
-    #     return classes
-
     @app.route('/school/classes')
     def getAllClass():
+        allClass = Classes.query.all()
+        counter = 0
+        classes = {}
+        for i in allClass:
+            counter += 1
+            # classes[i.classID] = i.classID
+            # classes[i.teacherName] = i.teacherName
+            # classes[i.classTime] = i.classTime
+            # classes[str(i.enrolledNum)] = str(i.enrolledNum)
+            # classes[str(i.maxEnrollment)] = str(i.maxEnrollment)
+        for i in range(0, counter):
+            classes[i] = {}
+            classes[i]["classID"] = allClass[i].classID
+            classes[i]["teacherName"] = allClass[i].teacherName
+            classes[i]["classTime"] = allClass[i].classTime
+            classes[i]["enrolledNum"] = allClass[i].enrolledNum
+            classes[i]["maxEnrollment"] = allClass[i].maxEnrollment
+        print(classes)
+        #classes['class1']["classID"] = allClass[0].classID
+        # for i in allClass:
+        #     for j in range(counter):
+        #         classes[str(j)]["classID"] = i.classID
+        #         classes[str(j)]["teacherName"] = i.teacherName
+        #         classes[str(j)]["classTime"] = i.classTime
+        #         classes[str(j)]["enrolledNum"] = str(i.enrolledNum)
+        #         classes[str(j)]["maxEnrollment"] = str(i.maxEnrollment)
+        # for i in range(counter):
+        #     classes[i]["classID"] = i.classID
+        #     classes[id]["teacherName"] = i.teacherName
+        #     classes[id]["classTime"] = i.classTime
+        #     classes[id]["enrolledNum"] = str(i.enrolledNum)
+        #     classes[id]["maxEnrollment"] = str(i.maxEnrollment)
+
+            # convert = str(i.enrolledNum)
+            # classes[i.classID] = i.classID
+            # classes[i.teacherName] = i.teacherName
+            # classes[i.classTime] = i.classTime
+            # classes[str(i.enrolledNum)] = str(i.enrolledNum)
+            # classes[str(i.maxEnrollment)] = str(i.maxEnrollment)
+        print(Classes.id)
+        return classes
+
+    @app.route('/school/classes')
+    def getAllClass0():
         allClass = Classes.query.all()
         classes = {}
         for i in allClass:
