@@ -4,7 +4,9 @@
 <head>
     <title>Profile</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='Profile_Style.css')}}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src ="{{ url_for('static', filename='functions.js')}}"></script>
+
 
 </head>
 
@@ -19,7 +21,7 @@
 
         <div id="space">
 
-            <button class="proftablink" onclick="yourClass()">Your Classes</button>
+            <button class="proftablink" onclick="yourClassProf()">Your Classes</button>
 
 
             <div id="profile" class="tabcontent"></div>

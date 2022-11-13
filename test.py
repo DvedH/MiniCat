@@ -249,14 +249,51 @@ with app.app_context():
 
     @app.route('/<string:username>/teacherClass', methods=['GET'])
     def getTeacherClass(username):
-        userTeacher = Teacher.query.filter_by(userID=username).first()
-        result = db.session.execute(db.select(Classes.classID).where(Classes.teacherName == userTeacher.teacherName))
-        # print(type(result.all()))
-        # Create a dictionary that shows all classes that the student has.
-        classDictionary = [dict(r) for r in result.all()]
-        for classDict in classDictionary:
-            return classDict["classID"]
-        return ""
+        allClass = Classes.query.all()
+        enrolled = Enrollment.query.all()
+        counter = 0
+        c2 = 0
+        classes = {}
+        classTaken = {}
+        schedule = {}
+        for i in allClass:
+            counter += 1
+        for i in range(0, counter):
+            classes[i] = {}
+            classes[i]["classID"] = allClass[i].classID
+            classes[i]["teacherName"] = allClass[i].teacherName
+            classes[i]["classTime"] = allClass[i].classTime
+            classes[i]["enrolledNum"] = allClass[i].enrolledNum
+            classes[i]["maxEnrollment"] = allClass[i].maxEnrollment
+        for i in enrolled:
+            c2 += 1
+        for i in range(0, c2):
+            classTaken[i] = {}
+            classTaken[i]["classID"] = enrolled[i].classID
+            classTaken[i]["userID"] = enrolled[i].userID
+            classTaken[i]["grade"] = enrolled[i].grade
+
+        for i in range(0, counter):
+            if (classes[i]["teacherName"] == username) and (classes[i]["classID"] == allClass[i].classID):
+                schedule[i] = {}
+                schedule[i]["classID"] = allClass[i].classID
+                schedule[i]["teacherName"] = allClass[i].teacherName
+                schedule[i]["classTime"] = allClass[i].classTime
+                schedule[i]["enrolledNum"] = allClass[i].enrolledNum
+                schedule[i]["maxEnrollment"] = allClass[i].maxEnrollment
+        # if
+        print(classes[1]["teacherName"])
+        print(username)
+        print(schedule)
+        return schedule
+        # userTeacher = Teacher.query.filter_by(userID=username).first()
+        # result = db.session.execute(db.select(Classes.classID).where(Classes.teacherName == userTeacher.teacherName))
+        # # print(type(result.all()))
+        # # Create a dictionary that shows all classes that the student has.
+        # classDictionary = [dict(r) for r in result.all()]
+        # for classDict in classDictionary:
+        #     return classDict["classID"]
+        # return ""
 
 
     @app.route('/<string:username>/<string:classname>/studentGrades', methods=['GET]'])

@@ -25,7 +25,7 @@ var tracker = 0;
     async function yourClassProf() {
         var username;
         username = document.getElementById("USER").innerHTML
-        res = fetch('http://127.0.0.1:5000/'+username+'/classes', {
+        res = fetch('http://127.0.0.1:5000/'+username+'/teacherClass', {
             method:'GET',
         })
             .then((response) => response.json())
