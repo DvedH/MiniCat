@@ -126,18 +126,6 @@ with app.app_context():
         print(classes)
         print(schedule)
         return schedule
-        # print('Getting class...')
-        # # Query all values of Enrollment, the database where the classes are located.
-        # enroll = Enrollment.query.all()
-        # result = db.session.execute(db.select(Enrollment.classID).where(
-        #     Enrollment.userID == username))  # Select the parts of enrollment where classID is the same as the ID of the student
-        # # print(type(result.all()))
-        # # Create a dictionary that shows all classes that the student has.
-        # classDictionary = [dict(r) for r in result.all()]
-        # for classDict in classDictionary:
-        #     classDict["classID"]
-        # return classDict["classID"]
-
 
     @app.route('/school/classes')
     def getAllClass():
@@ -239,13 +227,15 @@ with app.app_context():
     # TEACHER FUNCTIONS
     @app.route('/editGrade', methods=['PUT'])
     def editGrades():
-        teacher = Teacher.query.all()
-        contents = request.get_json(silent=True)
-        newGrade = Enrollment.query.filter_by(classID=contents["classname"], userID=contents["username"]).update(
-            dict(grade=contents["grades"]))
+        contents = request.json
+        cn = contents["classID"]
+        nm = contents["userID"]
+        gr = contents["grade"]
+        newGrade = Enrollment.query.filter_by(userID=nm, classID=cn).update(dict(grade=gr))
+
+        print(gr)
         db.session.commit()
         return "success"
-
 
     @app.route('/<string:username>/teacherClass', methods=['GET'])
     def getTeacherClass(username):
@@ -286,17 +276,9 @@ with app.app_context():
         print(username)
         print(schedule)
         return schedule
-        # userTeacher = Teacher.query.filter_by(userID=username).first()
-        # result = db.session.execute(db.select(Classes.classID).where(Classes.teacherName == userTeacher.teacherName))
-        # # print(type(result.all()))
-        # # Create a dictionary that shows all classes that the student has.
-        # classDictionary = [dict(r) for r in result.all()]
-        # for classDict in classDictionary:
-        #     return classDict["classID"]
-        # return ""
 
 
-    @app.route('/<string:username>/<string:classname>/studentGrades', methods=['GET]'])
+    @app.route('/<string:username>/<string:classname>/studentGrades', methods=['GET'])
     def getStudentGrades(username, classname):
         userTeacher = Teacher.query.filter_by(userID=username).first()  # Targets the teacher with the same ID.
         targetClass = Classes.query.filter_by(classID=classname).first()  # Finds the class that has the same ID/name.
@@ -304,10 +286,33 @@ with app.app_context():
         # We want to pull all of the student's grades from the classes that the teacher will teach.
 
 
-    @app.route('/fillUsername', methods=['PUT'])
-    def filluser():
-        return currenUser
+    @app.route('/<string:classname>/studentGrades', methods=['POST'])
+    def getStudentRoster(classname):
+        allClass = Classes.query.all()
+        enrolled = Enrollment.query.all()
+        counter = 0
+        c2 = 0
+        classes = {}
+        classTaken = {}
+        roster = {}
+        for k in enrolled:
+            c2 += 1
+        for i in range(0, c2):
+            classTaken[i] = {}
+            classTaken[i]["classID"] = enrolled[i].classID
+            classTaken[i]["userID"] = enrolled[i].userID
+            classTaken[i]["grade"] = enrolled[i].grade
+        for j in range(0, c2):
+            if (classname == classTaken[j]["classID"]):
+                roster[j] = {}
+                roster[j]["classID"] = enrolled[j].classID
+                roster[j]["userID"] = enrolled[j].userID
+                roster[j]["grade"] = enrolled[j].grade
 
+        print(classname)
+        print(roster)
+        print(classTaken)
+        return roster
     @app.route('/login', methods=['POST', 'GET'])
     def login():
         if request.method == 'POST':
