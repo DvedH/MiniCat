@@ -2,6 +2,7 @@ from pprint import pprint
 from flask import Flask, jsonify
 from flask import request
 from flask import abort, render_template, session, g
+import bcrypt
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_admin import Admin
@@ -62,6 +63,7 @@ with app.app_context():
         password = db.Column(db.String, unique=False, nullable=False)
         isStudent = db.Column(db.Boolean, unique=False, nullable=False)
 
+
     db.create_all()
     admin.add_view(ModelView(Student, db.session))
     admin.add_view(ModelView(Users, db.session))
@@ -72,9 +74,43 @@ with app.app_context():
 
     @app.route('/')
     def home():
-        return render_template('login.html')
+        return render_template('register.html')
 
 
+    @app.route('/register', methods=['POST'])
+    def register():
+        usn = request.form['usn']
+        name = request.form['fname']
+        pswd = request.form['psw']
+        student= True
+
+        hashed = bcrypt.hashpw(pswd.encode('utf-8'), bcrypt.gensalt())
+
+        allClass = Classes.query.all()
+        enrolled = Enrollment.query.all()
+        counter = 0
+        c2 = 0
+        classes = {}
+        classTaken = {}
+        schedule = {}
+        for i in allClass:
+            counter += 1
+        for i in range(0, counter):
+            classes[i] = {}
+            classes[i]["classID"] = allClass[i].classID
+            classes[i]["teacherName"] = allClass[i].teacherName
+            classes[i]["classTime"] = allClass[i].classTime
+            classes[i]["enrolledNum"] = allClass[i].enrolledNum
+            classes[i]["maxEnrollment"] = allClass[i].maxEnrollment
+
+        for i in range(0, counter):
+            if (classes[i]["teacherName"] == name) and (classes[i]["classID"] == allClass[i].classID):
+                student = False
+                break
+
+        db.session.add(User(name=name, userID=usn, password=hashed, isStudent=student))
+        db.session.commit()
+        return render_template('login.html', info="Hello "+name)
     # STUDENT FUNCTIONS
 
     @app.route('/<string:username>', methods=['GET'])
@@ -255,13 +291,13 @@ with app.app_context():
             classes[i]["classTime"] = allClass[i].classTime
             classes[i]["enrolledNum"] = allClass[i].enrolledNum
             classes[i]["maxEnrollment"] = allClass[i].maxEnrollment
-        for i in enrolled:
-            c2 += 1
-        for i in range(0, c2):
-            classTaken[i] = {}
-            classTaken[i]["classID"] = enrolled[i].classID
-            classTaken[i]["userID"] = enrolled[i].userID
-            classTaken[i]["grade"] = enrolled[i].grade
+        # for i in enrolled:
+        #     c2 += 1
+        # for i in range(0, c2):
+        #     classTaken[i] = {}
+        #     classTaken[i]["classID"] = enrolled[i].classID
+        #     classTaken[i]["userID"] = enrolled[i].userID
+        #     classTaken[i]["grade"] = enrolled[i].grade
 
         for i in range(0, counter):
             if (classes[i]["teacherName"] == username) and (classes[i]["classID"] == allClass[i].classID):
@@ -316,51 +352,22 @@ with app.app_context():
     @app.route('/login', methods=['POST', 'GET'])
     def login():
         if request.method == 'POST':
+
             session.pop('Username', None)
             name = request.form['usn']
             pswd = request.form['psw']
 
-            allUsers = User.query.all()
-            users = {}
-            passF = 0
-            nameF = 0
-            teacher = 0
+            user =User.query.filter_by(userID=name).first()
 
-            for i in allUsers:
-                users[i.name] = i.name
-                users[i.userID] = i.userID
-                users[i.password] = i.password
-                users[i.isStudent] = i.isStudent
-
-            for i in allUsers:
-                if users[i.userID] == name:
-                    if users[i.password] == pswd:
-                        if users[i.isStudent]:
-                            fullname = str(users[i.name])
-                            currenUser = fullname
-                            session['Username'] = fullname
-                            return render_template('profile.html', name=fullname)
-                    else:
-                        passF = 1
-                else:
-                    nameF = 1
-
-            for i in allUsers:
-                if users[i.userID] == name:
-                    if users[i.password] == pswd:
-                        if not users[i.isStudent]:
-                            return render_template('Add.html', name=users[i.name])
-
-            if nameF == 1:
+            if not user:
                 return render_template('login.html', info="wrong Username")
-
-            if passF == 2:
+            if bcrypt.checkpw(pswd.encode('utf-8'), user.password):
+                if user.isStudent:
+                    return render_template('profile.html', name=user.name)
+                else:
+                    return render_template('Add.html', name=user.name)
+            else:
                 return render_template('login.html', info="wrong Password")
-
-        if request.method == 'GET':
-            if "Username" in session:
-                usr = session["Username"]
-                return usr
 
 
     @app.route('/logout', methods=['POST', 'GET'])
