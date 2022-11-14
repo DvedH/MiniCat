@@ -48,16 +48,17 @@ label {
   width: 100%;
   background-color: rgb(77, 151, 236);
   border-radius: 8px;
-  border: none;
 }
 
 button {
   font-size: 35px;
   align-self: center;
   width: 100%;
+  margin-top: 4px;
   background-color: rgb(77, 151, 236);
   border-radius: 8px;
-  border: none;
+  border: solid;
+  border-color: darkblue;
 }
 
 #button:hover {
@@ -67,4 +68,15 @@ button {
 
 body {
   background-color: rgb(138, 173, 204);
+}
+#goReg{
+
+  font-size: 35px;
+  align-self: center;
+  width: 100%;
+  background-color: rgb(77, 151, 236);
+  border-radius: 8px;
+}
+#goReg:hover {
+  background-color: rgb(206, 206, 255);
 }

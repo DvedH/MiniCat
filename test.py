@@ -111,6 +111,11 @@ with app.app_context():
         db.session.add(User(name=name, userID=usn, password=hashed, isStudent=student))
         db.session.commit()
         return render_template('login.html', info="Hello "+name)
+
+
+    @app.route('/register', methods=['Get'])
+    def registerHome():
+        return render_template('register.html')
     # STUDENT FUNCTIONS
 
     @app.route('/<string:username>', methods=['GET'])
